@@ -1,0 +1,4 @@
+google-cloud-bigquery
+matplotlib
+pydantic
+pypinfo
