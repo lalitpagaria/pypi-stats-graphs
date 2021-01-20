@@ -15,14 +15,14 @@ class PyPiDataFetcher(BaseSettings):
     __slots__ = ('_client',)
     service_account_json: SecretStr = Field(..., env='service_account_json')
     package: str
-    limit: Optional[int] = 1000
+    limit: Optional[int] = None
     header_fields: Optional[List[str]] = [
-        "country",
-        "distro",
-        "system",
         "date",
+        "country",
         "version",
         "installer",
+        "system",
+        "distro",
         "cpu",
         "system-release",
         "pyversion"
@@ -50,23 +50,25 @@ class PyPiDataFetcher(BaseSettings):
 
             tmp.close()
 
-    def _build_query(self):
+    def get_parsed_fields(self):
         parsed_fields = []
         for field in self.header_fields:
             parsed = FIELD_MAP.get(field)
             if parsed is None:
                 raise ValueError(f'"{field}" is an unsupported field.')
             parsed_fields.append(parsed)
+        return parsed_fields
 
+    def _build_query(self):
         return build_query(
             self.package,
-            parsed_fields,
+            self.get_parsed_fields(),
             limit=self.limit,
             days=str(self.days),
             pip=not self.all_installers,
         )
 
-    def get_query_results(self):
+    def get_stats(self):
         built_query = self._build_query()
         query_job = self._client.query(built_query, job_config=create_config())
         query_rows = query_job.result(timeout=self.timeout // 1000)
@@ -75,5 +77,4 @@ class PyPiDataFetcher(BaseSettings):
             # Only headers returned
             logger.warning("No data returned, check project name")
             return None
-
         return rows

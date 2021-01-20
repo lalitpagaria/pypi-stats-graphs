@@ -57,6 +57,11 @@ setup(
     include_package_data=True,
     python_requires=">=3.6.0",
     tests_require=["pytest"],
+    entry_points={
+        'console_scripts': [
+            'pypi_stats_utils = pypi_stats_utils.cli:cli',
+        ],
+    },
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
