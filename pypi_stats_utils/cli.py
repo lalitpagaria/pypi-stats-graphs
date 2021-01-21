@@ -8,12 +8,11 @@ CONTEXT_SETTINGS = {'max_content_width': 300}
 @click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.argument('package', required=True)
 @click.option('-fields', '-f', multiple=True, required=False, help='Filed names')
-@click.option('--csv', '-c', is_flag=True, default=True, help='Print data in CSV format')
-@click.option('--print_header', '-p', is_flag=True, default=False, help='Print header in case of CSV format')
+@click.option('--csv', '-c', is_flag=True, help='Print data in CSV format')
+@click.option('--print_header', '-p', is_flag=True, help='Print header in case of CSV format')
 @click.option('--timeout', '-t', type=int, default=120000, help='Milliseconds. Default: 120000 (2 minutes)')
 @click.option('--days', '-d', default=0, help='Number of days in the past to include. Default: 0')
-@click.option('--all', 'all_installers', is_flag=True, default=True,
-              help='Show downloads by all installers, not only pip.')
+@click.option('--all', '-a', 'all_installers', is_flag=True, help='Show downloads by all installers, not only pip.')
 @click.version_option()
 @click.pass_context
 def cli(
