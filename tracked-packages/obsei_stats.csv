@@ -1,0 +1,11 @@
+download_date,country,version,installer_name,system_name,distro_name,cpu,system_release,python_version,download_count
+2021-01-25,US,0.0.4,bandersnatch,None,None,None,None,None,6
+2021-01-26,DE,0.0.2,Browser,None,None,None,None,None,3
+2021-01-31,DE,0.0.2,Browser,None,None,None,None,None,3
+2021-01-27,US,0.0.4,bandersnatch,None,None,None,None,None,2
+2021-01-24,US,0.0.2,bandersnatch,None,None,None,None,None,2
+2021-01-31,US,0.0.3,bandersnatch,None,None,None,None,None,2
+2021-01-25,CN,0.0.3,bandersnatch,None,None,None,None,None,2
+2021-01-25,None,0.0.4,bandersnatch,None,None,None,None,None,2
+2021-02-01,CA,0.0.2,bandersnatch,None,None,None,None,None,2
+2021-01-28,CN,0.0.2,bandersnatch,None,None,None,None,None,2

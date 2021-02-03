@@ -4,7 +4,7 @@ import tempfile
 from typing import Any, List, Optional
 
 from google.cloud.bigquery import Client
-from pydantic import BaseSettings, Field, SecretStr
+from pydantic import BaseSettings, Field, PrivateAttr, SecretStr
 from pypinfo.cli import FIELD_MAP
 from pypinfo.core import build_query, create_config, parse_query_result
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class PyPiDataFetcher(BaseSettings):
-    __slots__ = ('_client',)
+    _client: Client = PrivateAttr()
     service_account_json: SecretStr = Field(..., env='service_account_json')
     package: str
     limit: Optional[int] = None
@@ -38,21 +38,13 @@ class PyPiDataFetcher(BaseSettings):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", prefix="google_cred") as tmp:
             tmp.write(self.service_account_json.get_secret_value())
             tmp.seek(0)
-
-            object.__setattr__(
-                self,
-                '_client',
-                Client.from_service_account_json(
-                    tmp.name,
-                    project=project_name
-                )
-            )
-
+            self._client = Client.from_service_account_json(tmp.name, project=project_name)
             tmp.close()
 
-    def get_parsed_fields(self):
+    @staticmethod
+    def get_parsed_fields(fields: Optional[List[str]]):
         parsed_fields = []
-        for field in self.header_fields:
+        for field in fields:
             parsed = FIELD_MAP.get(field)
             if parsed is None:
                 raise ValueError(f'"{field}" is an unsupported field.')
@@ -62,7 +54,7 @@ class PyPiDataFetcher(BaseSettings):
     def _build_query(self):
         return build_query(
             self.package,
-            self.get_parsed_fields(),
+            self.get_parsed_fields(self.header_fields),
             limit=self.limit,
             days=str(self.days),
             pip=not self.all_installers,
